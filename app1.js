@@ -4,8 +4,13 @@ const { useState, useEffect, useContext, createContext } = React;
 const initialData = {
   users: [
     { id: 1, name: "Raj Kumar", email: "admin@suchna.com", password: "admin123", role: "Admin", department: "Management", status: "Active", avatar: "RK" },
-    { id: 2, name: "Priya Sharma", email: "priya@suchna.com", password: "user123", role: "Sales Manager", department: "Sales", status: "Active", avatar: "PS" },
-    { id: 3, name: "Amit Patel", email: "amit@suchna.com", password: "user123", role: "Project Manager", department: "Projects", status: "Active", avatar: "AP" }
+    { id: 2, name: "Priya Sharma", email: "priya@suchna.com", password: "user123", role: "Sales Manager", department: "Sales", status: "Active", avatar: "PS", phone: "+91-9876543220", title: "Account Manager" },
+    { id: 3, name: "Amit Patel", email: "amit@suchna.com", password: "user123", role: "Project Manager", department: "Projects", status: "Active", avatar: "AP", phone: "+91-9876543221", title: "Project Lead" }
+  ],
+  clientUsers: [
+    { id: 101, name: "Rajesh Verma", email: "client1@techstart.com", password: "client123", role: "Client", company_id: 1, company_name: "TechStart India", status: "Active" },
+    { id: 102, name: "Neha Gupta", email: "client2@retailcorp.com", password: "client123", role: "Client", company_id: 2, company_name: "RetailCorp Solutions", status: "Active" },
+    { id: 103, name: "Sophia Das", email: "client3@designhub.com", password: "client123", role: "Client", company_id: 3, company_name: "DesignHub Studios", status: "Active" }
   ],
   services: [
     { id: 1, name: "Web Development", category: "Development", base_price: 50000, description: "Custom web applications and websites" },
@@ -14,9 +19,9 @@ const initialData = {
     { id: 4, name: "Digital Marketing", category: "Marketing", base_price: 25000, description: "SEO, social media, and campaigns" }
   ],
   companies: [
-    { id: 1, name: "TechStart India", industry: "IT/Software", email: "contact@techstart.com", phone: "9876543210", address: "Bangalore, India", service_type: "Web Development", status: "Active", total_value: 500000, created_at: "2025-01-15" },
-    { id: 2, name: "RetailCorp Solutions", industry: "Retail", email: "info@retailcorp.com", phone: "9876543211", address: "Mumbai, India", service_type: "Custom CRM-ERP", status: "Active", total_value: 800000, created_at: "2025-02-20" },
-    { id: 3, name: "DesignHub Studios", industry: "Creative", email: "hello@designhub.com", phone: "9876543212", address: "Delhi, India", service_type: "Graphic Design", status: "Active", total_value: 250000, created_at: "2025-03-10" },
+    { id: 1, name: "TechStart India", industry: "IT/Software", email: "contact@techstart.com", phone: "9876543210", address: "Bangalore, India", service_type: "Web Development", status: "Active", total_value: 500000, created_at: "2025-01-15", account_manager_id: 2 },
+    { id: 2, name: "RetailCorp Solutions", industry: "Retail", email: "info@retailcorp.com", phone: "9876543211", address: "Mumbai, India", service_type: "Custom CRM-ERP", status: "Active", total_value: 800000, created_at: "2025-02-20", account_manager_id: 3 },
+    { id: 3, name: "DesignHub Studios", industry: "Creative", email: "hello@designhub.com", phone: "9876543212", address: "Delhi, India", service_type: "Graphic Design", status: "Active", total_value: 250000, created_at: "2025-03-10", account_manager_id: 2 },
     { id: 4, name: "MarketPro Agency", industry: "Marketing", email: "contact@marketpro.com", phone: "9876543213", address: "Pune, India", service_type: "Digital Marketing", status: "Active", total_value: 150000, created_at: "2025-04-05" },
     { id: 5, name: "FinTech Solutions", industry: "Finance", email: "info@fintech.com", phone: "9876543214", address: "Hyderabad, India", service_type: "Custom CRM-ERP", status: "Active", total_value: 600000, created_at: "2025-05-12" }
   ],
@@ -40,9 +45,9 @@ const initialData = {
     { id: 10, company_id: 5, contact_id: 5, service_type: "Web Development", estimated_value: 120000, stage: "Inquiry", created_at: "2025-11-09", updated_at: "2025-11-09", notes: "Dashboard application" }
   ],
   projects: [
-    { id: 1, company_id: 1, name: "E-commerce Platform", service_type: "Web Development", status: "In Progress", start_date: "2025-10-15", end_date: "2025-12-15", budget: 75000, assigned_to_id: 3, created_at: "2025-10-15" },
-    { id: 2, company_id: 2, name: "Inventory Management System", service_type: "Custom CRM-ERP", status: "Planning", start_date: "2025-11-15", end_date: "2026-02-15", budget: 200000, assigned_to_id: 3, created_at: "2025-11-01" },
-    { id: 3, company_id: 3, name: "Brand Identity Design", service_type: "Graphic Design", status: "In Review", start_date: "2025-09-01", end_date: "2025-11-30", budget: 50000, assigned_to_id: 2, created_at: "2025-09-01" },
+    { id: 1, company_id: 1, name: "E-commerce Platform", service_type: "Web Development", status: "In Progress", start_date: "2025-10-15", end_date: "2025-12-15", budget: 75000, assigned_to_id: 3, created_at: "2025-10-15", progress: 45, milestones: [{id: 101, name: "Design & Wireframes", status: "Completed", date: "2025-10-30", deliverable: "Wireframes.pdf"}, {id: 102, name: "Backend Development", status: "In Progress", date: "2025-11-30", deliverable: null}, {id: 103, name: "Frontend Development", status: "Pending", date: "2025-12-15", deliverable: null}] },
+    { id: 2, company_id: 2, name: "Inventory Management System", service_type: "Custom CRM-ERP", status: "Planning", start_date: "2025-11-15", end_date: "2026-02-15", budget: 200000, assigned_to_id: 3, created_at: "2025-11-01", progress: 15, milestones: [{id: 201, name: "Requirements Analysis", status: "In Progress", date: "2025-11-25", deliverable: null}, {id: 202, name: "System Design", status: "Pending", date: "2025-12-31", deliverable: null}] },
+    { id: 3, company_id: 3, name: "Brand Identity Design", service_type: "Graphic Design", status: "Completed", start_date: "2025-09-01", end_date: "2025-10-15", budget: 50000, assigned_to_id: 2, created_at: "2025-09-01", progress: 100, milestones: [{id: 301, name: "Concept Development", status: "Completed", date: "2025-09-15", deliverable: "Concepts.pdf"}, {id: 302, name: "Logo Design", status: "Completed", date: "2025-10-01", deliverable: "Logo_Files.zip"}, {id: 303, name: "Brand Guidelines", status: "Completed", date: "2025-10-15", deliverable: "Brand_Guide.pdf"}] },
     { id: 4, company_id: 4, name: "Digital Marketing Campaign", service_type: "Digital Marketing", status: "In Progress", start_date: "2025-10-01", end_date: "2025-12-31", budget: 30000, assigned_to_id: 2, created_at: "2025-10-01" },
     { id: 5, company_id: 5, name: "Financial Dashboard", service_type: "Custom CRM-ERP", status: "Completed", start_date: "2025-07-01", end_date: "2025-10-30", budget: 180000, assigned_to_id: 3, created_at: "2025-07-01" }
   ],
@@ -66,9 +71,23 @@ const initialData = {
   invoices: [
     { id: 1, project_id: 1, company_id: 1, amount: 25000, due_date: "2025-11-25", status: "Pending", created_at: "2025-11-01", invoice_number: "INV-001" },
     { id: 2, project_id: 1, company_id: 1, amount: 50000, due_date: "2025-12-31", status: "Draft", created_at: "2025-11-05", invoice_number: "INV-002" },
-    { id: 3, project_id: 5, company_id: 5, amount: 180000, due_date: "2025-11-10", status: "Paid", created_at: "2025-10-15", invoice_number: "INV-003" },
-    { id: 4, project_id: 3, company_id: 3, amount: 30000, due_date: "2025-11-05", status: "Overdue", created_at: "2025-10-01", invoice_number: "INV-004" },
+    { id: 3, project_id: 3, company_id: 3, amount: 45000, due_date: "2025-10-20", status: "Paid", created_at: "2025-10-01", invoice_number: "INV-003", paid_date: "2025-10-18" },
+    { id: 4, project_id: 2, company_id: 2, amount: 75000, due_date: "2025-12-15", status: "Pending", created_at: "2025-11-05", invoice_number: "INV-004" },
     { id: 5, project_id: 4, company_id: 4, amount: 15000, due_date: "2025-11-20", status: "Pending", created_at: "2025-10-25", invoice_number: "INV-005" }
+  ],
+  supportTickets: [
+    { id: 1, company_id: 1, project_id: 1, title: "Database connection timeout", category: "Technical Issue", priority: "High", status: "Open", created_date: "2025-11-08", created_by: "client1@techstart.com", assigned_to_id: 3, description: "Getting timeout errors when connecting to database", messages: [{id: 1, sender_id: 101, sender_name: "Rajesh Verma", message: "We are experiencing database connection issues", timestamp: "2025-11-08T10:00:00", attachment: null}, {id: 2, sender_id: 3, sender_name: "Amit Patel", message: "We are investigating this issue. Will update within 2 hours.", timestamp: "2025-11-08T10:30:00", attachment: null}] },
+    { id: 2, company_id: 1, project_id: 1, title: "Feature request - Export to Excel", category: "Feature Request", priority: "Medium", status: "In Progress", created_date: "2025-11-05", created_by: "client1@techstart.com", assigned_to_id: 2, description: "Can you add export to Excel functionality?", messages: [{id: 3, sender_id: 101, sender_name: "Rajesh Verma", message: "Can we have an export feature for reports?", timestamp: "2025-11-05T14:00:00", attachment: null}] },
+    { id: 3, company_id: 2, project_id: 2, title: "Requirements clarification needed", category: "Project Question", priority: "High", status: "Pending Response", created_date: "2025-11-10", created_by: "client2@retailcorp.com", assigned_to_id: 3, description: "Need clarification on inventory module requirements", messages: [{id: 4, sender_id: 102, sender_name: "Neha Gupta", message: "Can we discuss the inventory module in detail?", timestamp: "2025-11-10T09:00:00", attachment: null}] }
+  ],
+  serviceRequests: [
+    { id: 1, company_id: 1, service_type: "Digital Marketing", title: "Social Media Campaign", status: "Pending Quote", created_date: "2025-11-09", budget: 30000, description: "We need social media marketing for product launch" },
+    { id: 2, company_id: 2, service_type: "Graphic Design", title: "UI/UX Design for Mobile App", status: "Quoted", created_date: "2025-11-07", budget: 50000, description: "Design mobile app interface", quote_amount: 45000 }
+  ],
+  messages: [
+    { id: 1, sender_id: 2, receiver_id: 101, company_id: 1, message: "Hi Rajesh! How is the project progressing?", timestamp: "2025-11-10T15:30:00", read: true },
+    { id: 2, sender_id: 101, receiver_id: 2, company_id: 1, message: "Hi Priya! Things are going well, on track for the deadline.", timestamp: "2025-11-10T16:00:00", read: true },
+    { id: 3, sender_id: 3, receiver_id: 102, company_id: 2, message: "Hi Neha, ready to start the requirements gathering next week", timestamp: "2025-11-10T14:20:00", read: false }
   ],
   activities: [
     { id: 1, user_id: 2, entity_type: "Lead", entity_id: 1, action: "Created new lead", timestamp: "2025-11-10T10:30:00" },
@@ -87,6 +106,7 @@ const AppContext = createContext();
 
 function AppProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loginType, setLoginType] = useState(null);
   const [data, setData] = useState(initialData);
   const [toast, setToast] = useState(null);
 
@@ -95,18 +115,30 @@ function AppProvider({ children }) {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const login = (email, password) => {
-    const user = data.users.find(u => u.email === email && u.password === password);
-    if (user) {
-      setCurrentUser(user);
-      showToast(`Welcome back, ${user.name}!`, 'success');
-      return true;
+  const login = (email, password, type) => {
+    if (type === 'admin') {
+      const user = data.users.find(u => u.email === email && u.password === password);
+      if (user) {
+        setCurrentUser(user);
+        setLoginType('admin');
+        showToast(`Welcome back, ${user.name}!`, 'success');
+        return true;
+      }
+    } else if (type === 'client') {
+      const client = data.clientUsers.find(u => u.email === email && u.password === password);
+      if (client) {
+        setCurrentUser(client);
+        setLoginType('client');
+        showToast(`Welcome, ${client.name}!`, 'success');
+        return true;
+      }
     }
     return false;
   };
 
   const logout = () => {
     setCurrentUser(null);
+    setLoginType(null);
     showToast('Logged out successfully', 'info');
   };
 
@@ -269,6 +301,7 @@ function AppProvider({ children }) {
 
   const value = {
     currentUser,
+    loginType,
     data,
     login,
     logout,
@@ -314,6 +347,7 @@ function useApp() {
 // Login Component
 function Login() {
   const { login } = useApp();
+  const [loginMode, setLoginMode] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -321,10 +355,31 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
-    if (!login(email, password)) {
+    if (!login(email, password, loginMode)) {
       setError('Invalid email or password');
     }
   };
+
+  if (!loginMode) {
+    return (
+      <div className="login-container">
+        <div className="login-card">
+          <div className="login-header">
+            <h1>Suchna Consulting</h1>
+            <p>Choose Login Type</p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <button className="btn btn-primary" onClick={() => setLoginMode('admin')}>
+              Admin/Staff Login
+            </button>
+            <button className="btn btn-secondary" onClick={() => setLoginMode('client')}>
+              Client Login
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-container">
@@ -360,8 +415,9 @@ function Login() {
           <button type="submit" className="btn btn-primary">Login</button>
         </form>
         <div style={{ marginTop: '16px', fontSize: '12px', color: 'var(--color-text-secondary)', textAlign: 'center' }}>
-          Demo: admin@suchna.com / admin123
+          {loginMode === 'admin' ? 'Demo: admin@suchna.com / admin123' : 'Demo: client1@techstart.com / client123'}
         </div>
+        <button type="button" className="btn btn-secondary" style={{ marginTop: '8px' }} onClick={() => { setLoginMode(null); setEmail(''); setPassword(''); setError(''); }}>Back</button>
       </div>
     </div>
   );
@@ -1832,9 +1888,695 @@ function Reports() {
   );
 }
 
+// Client Portal Components
+function ClientDashboard() {
+  const { data, currentUser } = useApp();
+  const company = data.companies.find(c => c.id === currentUser.company_id);
+  const projects = data.projects.filter(p => p.company_id === currentUser.company_id);
+  const invoices = data.invoices.filter(i => i.company_id === currentUser.company_id);
+  const tickets = data.supportTickets.filter(t => t.company_id === currentUser.company_id);
+  const accountManager = data.users.find(u => u.id === company?.account_manager_id);
+
+  const activeProjects = projects.filter(p => p.status === 'In Progress' || p.status === 'Planning').length;
+  const completedProjects = projects.filter(p => p.status === 'Completed').length;
+  const pendingInvoices = invoices.filter(i => i.status === 'Pending' || i.status === 'Overdue').length;
+  const totalValue = company?.total_value || 0;
+
+  return (
+    <div>
+      <div style={{ background: 'var(--color-bg-1)', padding: 'var(--space-20)', borderRadius: 'var(--radius-lg)', marginBottom: 'var(--space-24)' }}>
+        <h2 style={{ marginBottom: 'var(--space-8)' }}>Welcome back, {currentUser.name}!</h2>
+        <p style={{ color: 'var(--color-text-secondary)' }}>{company?.name}</p>
+      </div>
+
+      <div className="dashboard-grid">
+        <div className="stat-card">
+          <div className="stat-card-title">Active Projects</div>
+          <div className="stat-card-value">{activeProjects}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-title">Completed Projects</div>
+          <div className="stat-card-value">{completedProjects}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-title">Pending Invoices</div>
+          <div className="stat-card-value">{pendingInvoices}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-title">Total Project Value</div>
+          <div className="stat-card-value">₹{(totalValue / 1000).toFixed(0)}K</div>
+        </div>
+      </div>
+
+      <div className="grid-2">
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Your Account Manager</h3>
+          </div>
+          <div className="card-body">
+            {accountManager ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-16)' }}>
+                <div className="user-avatar" style={{ width: '60px', height: '60px', fontSize: 'var(--font-size-xl)' }}>{accountManager.avatar}</div>
+                <div>
+                  <div style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-4)' }}>{accountManager.name}</div>
+                  <div style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-8)' }}>{accountManager.title}</div>
+                  <div style={{ fontSize: 'var(--font-size-sm)' }}>📧 {accountManager.email}</div>
+                  <div style={{ fontSize: 'var(--font-size-sm)' }}>📞 {accountManager.phone}</div>
+                </div>
+              </div>
+            ) : <p>No account manager assigned</p>}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Recent Updates</h3>
+          </div>
+          <div className="card-body">
+            <ul className="activities-list">
+              {projects.slice(0, 3).map(project => (
+                <li key={project.id} className="activity-item">
+                  <div className="activity-icon">📁</div>
+                  <div className="activity-content">
+                    <div className="activity-text">{project.name}</div>
+                    <div className="activity-time">{project.status} - {project.progress}% complete</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">Support Tickets</h3>
+        </div>
+        <div className="card-body">
+          {tickets.length > 0 ? (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.slice(0, 5).map(ticket => (
+                  <tr key={ticket.id}>
+                    <td><strong>{ticket.title}</strong></td>
+                    <td>{ticket.category}</td>
+                    <td><span className={`badge badge-${ticket.priority === 'High' ? 'error' : 'warning'}`}>{ticket.priority}</span></td>
+                    <td><span className={`badge badge-info`}>{ticket.status}</span></td>
+                    <td>{new Date(ticket.created_date).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : <p>No support tickets</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ClientProjects() {
+  const { data, currentUser } = useApp();
+  const [selectedProject, setSelectedProject] = useState(null);
+  const projects = data.projects.filter(p => p.company_id === currentUser.company_id);
+
+  if (selectedProject) {
+    const project = projects.find(p => p.id === selectedProject);
+    const invoices = data.invoices.filter(i => i.project_id === selectedProject);
+    const assignee = data.users.find(u => u.id === project?.assigned_to_id);
+
+    return (
+      <div>
+        <button className="btn btn-secondary mb-16" onClick={() => setSelectedProject(null)}>← Back to Projects</button>
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">{project?.name}</h3>
+          </div>
+          <div className="card-body">
+            <div className="form-row" style={{ marginBottom: 'var(--space-24)' }}>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)' }}>Status</div>
+                <span className={`badge badge-${project?.status === 'Completed' ? 'success' : 'info'}`}>{project?.status}</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)' }}>Progress</div>
+                <div style={{ fontWeight: 'var(--font-weight-semibold)' }}>{project?.progress}%</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)' }}>Timeline</div>
+                <div>{new Date(project?.start_date).toLocaleDateString()} - {new Date(project?.end_date).toLocaleDateString()}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)' }}>Budget</div>
+                <div>₹{(project?.budget / 1000).toFixed(0)}K</div>
+              </div>
+            </div>
+
+            <h4 style={{ marginBottom: 'var(--space-16)' }}>Milestones &amp; Timeline</h4>
+            {project?.milestones?.map(milestone => (
+              <div key={milestone.id} style={{ padding: 'var(--space-16)', background: 'var(--color-background)', borderRadius: 'var(--radius-base)', marginBottom: 'var(--space-12)', border: '1px solid var(--color-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-4)' }}>{milestone.name}</div>
+                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>Due: {new Date(milestone.date).toLocaleDateString()}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span className={`badge badge-${milestone.status === 'Completed' ? 'success' : milestone.status === 'In Progress' ? 'info' : 'warning'}`}>{milestone.status}</span>
+                    {milestone.deliverable && <div style={{ fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-4)' }}>📎 {milestone.deliverable}</div>}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <h4 style={{ marginTop: 'var(--space-24)', marginBottom: 'var(--space-16)' }}>Associated Invoices</h4>
+            {invoices.length > 0 ? (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Invoice #</th>
+                    <th>Amount</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoices.map(inv => (
+                    <tr key={inv.id}>
+                      <td>{inv.invoice_number}</td>
+                      <td>₹{inv.amount.toLocaleString()}</td>
+                      <td>{new Date(inv.due_date).toLocaleDateString()}</td>
+                      <td><span className={`badge badge-${inv.status === 'Paid' ? 'success' : 'warning'}`}>{inv.status}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : <p>No invoices for this project</p>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="dashboard-grid">
+        {projects.map(project => {
+          const assignee = data.users.find(u => u.id === project.assigned_to_id);
+          return (
+            <div key={project.id} className="stat-card" style={{ cursor: 'pointer' }} onClick={() => setSelectedProject(project.id)}>
+              <div style={{ marginBottom: 'var(--space-12)' }}>
+                <span className={`badge badge-${project.status === 'Completed' ? 'success' : 'info'}`}>{project.status}</span>
+              </div>
+              <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-8)' }}>{project.name}</div>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-12)' }}>{project.service_type}</div>
+              <div style={{ background: 'var(--color-secondary)', height: '8px', borderRadius: '4px', marginBottom: 'var(--space-8)', overflow: 'hidden' }}>
+                <div style={{ width: `${project.progress}%`, height: '100%', background: 'var(--color-primary)' }}></div>
+              </div>
+              <div style={{ fontSize: 'var(--font-size-sm)' }}>{project.progress}% Complete</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ClientInvoices() {
+  const { data, currentUser } = useApp();
+  const invoices = data.invoices.filter(i => i.company_id === currentUser.company_id);
+  const totalOutstanding = invoices.filter(i => i.status === 'Pending' || i.status === 'Overdue').reduce((sum, i) => sum + i.amount, 0);
+  const totalPaid = invoices.filter(i => i.status === 'Paid').reduce((sum, i) => sum + i.amount, 0);
+
+  return (
+    <div>
+      <div className="dashboard-grid mb-24">
+        <div className="stat-card">
+          <div className="stat-card-title">Total Paid</div>
+          <div className="stat-card-value">₹{(totalPaid / 1000).toFixed(0)}K</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-title">Outstanding Balance</div>
+          <div className="stat-card-value">₹{(totalOutstanding / 1000).toFixed(0)}K</div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">My Invoices</h3>
+        </div>
+        <div className="card-body">
+          {invoices.length > 0 ? (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Project</th>
+                  <th>Amount</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.map(invoice => {
+                  const project = data.projects.find(p => p.id === invoice.project_id);
+                  return (
+                    <tr key={invoice.id}>
+                      <td><strong>{invoice.invoice_number}</strong></td>
+                      <td>{project?.name || 'N/A'}</td>
+                      <td>₹{invoice.amount.toLocaleString()}</td>
+                      <td>{new Date(invoice.due_date).toLocaleDateString()}</td>
+                      <td>
+                        <span className={`badge badge-${invoice.status === 'Paid' ? 'success' : invoice.status === 'Overdue' ? 'error' : 'warning'}`}>
+                          {invoice.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button className="btn btn-secondary btn-small">Download PDF</button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <div className="empty-state">
+              <div className="empty-state-icon">📄</div>
+              <div className="empty-state-title">No invoices found</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ClientSupport() {
+  const { data, currentUser, showToast } = useApp();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [formData, setFormData] = useState({});
+  const tickets = data.supportTickets.filter(t => t.company_id === currentUser.company_id);
+
+  const handleCreateTicket = () => {
+    setSelectedTicket(null);
+    setFormData({ title: '', category: 'General', priority: 'Medium', description: '', project_id: null });
+    setShowModal(true);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    showToast('Support ticket created successfully', 'success');
+    setShowModal(false);
+  };
+
+  if (selectedTicket) {
+    const ticket = tickets.find(t => t.id === selectedTicket);
+    return (
+      <div>
+        <button className="btn btn-secondary mb-16" onClick={() => setSelectedTicket(null)}>← Back to Tickets</button>
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">{ticket?.title}</h3>
+          </div>
+          <div className="card-body">
+            <div className="form-row" style={{ marginBottom: 'var(--space-24)' }}>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>Ticket ID</div>
+                <div style={{ fontWeight: 'var(--font-weight-semibold)' }}>#{ticket?.id}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>Status</div>
+                <span className={`badge badge-info`}>{ticket?.status}</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>Priority</div>
+                <span className={`badge badge-${ticket?.priority === 'High' ? 'error' : 'warning'}`}>{ticket?.priority}</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>Created</div>
+                <div>{new Date(ticket?.created_date).toLocaleDateString()}</div>
+              </div>
+            </div>
+
+            <div style={{ padding: 'var(--space-16)', background: 'var(--color-bg-2)', borderRadius: 'var(--radius-base)', marginBottom: 'var(--space-24)' }}>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)' }}>Description</div>
+              <div>{ticket?.description}</div>
+            </div>
+
+            <h4 style={{ marginBottom: 'var(--space-16)' }}>Conversation</h4>
+            {ticket?.messages?.map(msg => (
+              <div key={msg.id} style={{ padding: 'var(--space-16)', background: msg.sender_id === currentUser.id ? 'var(--color-bg-1)' : 'var(--color-background)', borderRadius: 'var(--radius-base)', marginBottom: 'var(--space-12)', border: '1px solid var(--color-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-8)' }}>
+                  <div style={{ fontWeight: 'var(--font-weight-semibold)' }}>{msg.sender_name}</div>
+                  <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>{new Date(msg.timestamp).toLocaleString()}</div>
+                </div>
+                <div>{msg.message}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <button className="btn btn-primary mb-16" onClick={handleCreateTicket}>Create New Ticket</button>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">My Support Tickets</h3>
+        </div>
+        <div className="card-body">
+          {tickets.length > 0 ? (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.map(ticket => (
+                  <tr key={ticket.id}>
+                    <td><strong>{ticket.title}</strong></td>
+                    <td>{ticket.category}</td>
+                    <td><span className={`badge badge-${ticket.priority === 'High' ? 'error' : 'warning'}`}>{ticket.priority}</span></td>
+                    <td><span className={`badge badge-info`}>{ticket.status}</span></td>
+                    <td>{new Date(ticket.created_date).toLocaleDateString()}</td>
+                    <td>
+                      <button className="btn btn-secondary btn-small" onClick={() => setSelectedTicket(ticket.id)}>View</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="empty-state">
+              <div className="empty-state-icon">🎫</div>
+              <div className="empty-state-title">No support tickets</div>
+              <p>Create a ticket if you need help</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">Create Support Ticket</h3>
+              <button className="btn-icon" onClick={() => setShowModal(false)}>✕</button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">Subject *</label>
+                  <input className="form-input" value={formData.title || ''} onChange={(e) => setFormData({...formData, title: e.target.value})} required />
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Category</label>
+                    <select className="form-input" value={formData.category || ''} onChange={(e) => setFormData({...formData, category: e.target.value})}>
+                      <option>General</option>
+                      <option>Technical Issue</option>
+                      <option>Billing</option>
+                      <option>Project Question</option>
+                      <option>Feature Request</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Priority</label>
+                    <select className="form-input" value={formData.priority || ''} onChange={(e) => setFormData({...formData, priority: e.target.value})}>
+                      <option>Low</option>
+                      <option>Medium</option>
+                      <option>High</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Description *</label>
+                  <textarea className="form-input" value={formData.description || ''} onChange={(e) => setFormData({...formData, description: e.target.value})} required />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Create Ticket</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ClientMessages() {
+  const { data, currentUser } = useApp();
+  const company = data.companies.find(c => c.id === currentUser.company_id);
+  const accountManager = data.users.find(u => u.id === company?.account_manager_id);
+  const messages = data.messages.filter(m => m.company_id === currentUser.company_id);
+  const [newMessage, setNewMessage] = useState('');
+
+  return (
+    <div>
+      <div className="card">
+        <div className="card-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-12)' }}>
+            <div className="user-avatar">{accountManager?.avatar}</div>
+            <div>
+              <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>{accountManager?.name}</h3>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>{accountManager?.title}</div>
+            </div>
+          </div>
+        </div>
+        <div className="card-body">
+          <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: 'var(--space-16)' }}>
+            {messages.map(msg => {
+              const isCurrentUser = msg.sender_id === currentUser.id;
+              return (
+                <div key={msg.id} style={{ display: 'flex', justifyContent: isCurrentUser ? 'flex-end' : 'flex-start', marginBottom: 'var(--space-12)' }}>
+                  <div style={{ maxWidth: '70%', padding: 'var(--space-12)', background: isCurrentUser ? 'var(--color-primary)' : 'var(--color-background)', color: isCurrentUser ? 'var(--color-btn-primary-text)' : 'var(--color-text)', borderRadius: 'var(--radius-base)', border: isCurrentUser ? 'none' : '1px solid var(--color-border)' }}>
+                    <div style={{ marginBottom: 'var(--space-4)' }}>{msg.message}</div>
+                    <div style={{ fontSize: 'var(--font-size-xs)', opacity: 0.7 }}>{new Date(msg.timestamp).toLocaleString()}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: 'flex', gap: 'var(--space-12)' }}>
+            <input className="form-input" placeholder="Type your message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+            <button className="btn btn-primary">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ClientServiceRequest() {
+  const { data, currentUser, showToast } = useApp();
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({});
+  const requests = data.serviceRequests.filter(r => r.company_id === currentUser.company_id);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    showToast('Service request submitted successfully', 'success');
+    setShowModal(false);
+  };
+
+  return (
+    <div>
+      <button className="btn btn-primary mb-16" onClick={() => { setFormData({ service_type: 'Web Development', title: '', budget: 0, description: '', urgency: 'Medium' }); setShowModal(true); }}>Request New Service</button>
+
+      <div className="card mb-24">
+        <div className="card-header">
+          <h3 className="card-title">Available Services</h3>
+        </div>
+        <div className="card-body">
+          <div className="dashboard-grid">
+            {data.services.map(service => (
+              <div key={service.id} className="stat-card">
+                <div className="stat-card-title">{service.category}</div>
+                <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', margin: 'var(--space-8) 0' }}>{service.name}</div>
+                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-12)' }}>{service.description}</div>
+                <div className="stat-card-value">₹{(service.base_price / 1000).toFixed(0)}K</div>
+                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>Starting price</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">My Service Requests</h3>
+        </div>
+        <div className="card-body">
+          {requests.length > 0 ? (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Service Type</th>
+                  <th>Budget</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {requests.map(req => (
+                  <tr key={req.id}>
+                    <td><strong>{req.title}</strong></td>
+                    <td>{req.service_type}</td>
+                    <td>₹{(req.budget / 1000).toFixed(0)}K</td>
+                    <td><span className={`badge badge-${req.status === 'Quoted' ? 'success' : 'warning'}`}>{req.status}</span></td>
+                    <td>{new Date(req.created_date).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="empty-state">
+              <div className="empty-state-icon">📋</div>
+              <div className="empty-state-title">No service requests</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">Request New Service</h3>
+              <button className="btn-icon" onClick={() => setShowModal(false)}>✕</button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">Service Type *</label>
+                  <select className="form-input" value={formData.service_type || ''} onChange={(e) => setFormData({...formData, service_type: e.target.value})} required>
+                    {data.services.map(s => <option key={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Service Title *</label>
+                  <input className="form-input" value={formData.title || ''} onChange={(e) => setFormData({...formData, title: e.target.value})} required />
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Estimated Budget (₹)</label>
+                    <input type="number" className="form-input" value={formData.budget || 0} onChange={(e) => setFormData({...formData, budget: parseInt(e.target.value)})} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Urgency Level</label>
+                    <select className="form-input" value={formData.urgency || ''} onChange={(e) => setFormData({...formData, urgency: e.target.value})}>
+                      <option>Low</option>
+                      <option>Medium</option>
+                      <option>High</option>
+                      <option>Urgent</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Description *</label>
+                  <textarea className="form-input" value={formData.description || ''} onChange={(e) => setFormData({...formData, description: e.target.value})} required />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Submit Request</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ClientSettings() {
+  const { currentUser, data } = useApp();
+  const company = data.companies.find(c => c.id === currentUser.company_id);
+
+  return (
+    <div>
+      <div className="card mb-24">
+        <div className="card-header">
+          <h3 className="card-title">Company Information</h3>
+        </div>
+        <div className="card-body">
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Company Name</label>
+              <input className="form-input" value={company?.name || ''} disabled />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Industry</label>
+              <input className="form-input" value={company?.industry || ''} disabled />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Email</label>
+              <input className="form-input" value={company?.email || ''} disabled />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Phone</label>
+              <input className="form-input" value={company?.phone || ''} disabled />
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Address</label>
+            <input className="form-input" value={company?.address || ''} disabled />
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">User Profile</h3>
+        </div>
+        <div className="card-body">
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Name</label>
+              <input className="form-input" value={currentUser.name} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Email</label>
+              <input className="form-input" value={currentUser.email} disabled />
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Change Password</label>
+            <input type="password" className="form-input" placeholder="Enter new password" />
+          </div>
+          <button className="btn btn-primary">Update Profile</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main App Component
 function App() {
-  const { currentUser, logout } = useApp();
+  const { currentUser, loginType, logout } = useApp();
   const [currentView, setCurrentView] = useState('dashboard');
 
   if (!currentUser) {
@@ -1842,21 +2584,34 @@ function App() {
   }
 
   const renderView = () => {
-    switch (currentView) {
-      case 'dashboard': return <Dashboard />;
-      case 'contacts': return <Contacts />;
-      case 'leads': return <Leads />;
-      case 'projects': return <Projects />;
-      case 'tasks': return <Tasks />;
-      case 'services': return <Services />;
-      case 'invoices': return <Invoices />;
-      case 'team': return <Team />;
-      case 'reports': return <Reports />;
-      default: return <Dashboard />;
+    if (loginType === 'client') {
+      switch (currentView) {
+        case 'dashboard': return <ClientDashboard />;
+        case 'projects': return <ClientProjects />;
+        case 'invoices': return <ClientInvoices />;
+        case 'support': return <ClientSupport />;
+        case 'messages': return <ClientMessages />;
+        case 'requests': return <ClientServiceRequest />;
+        case 'settings': return <ClientSettings />;
+        default: return <ClientDashboard />;
+      }
+    } else {
+      switch (currentView) {
+        case 'dashboard': return <Dashboard />;
+        case 'contacts': return <Contacts />;
+        case 'leads': return <Leads />;
+        case 'projects': return <Projects />;
+        case 'tasks': return <Tasks />;
+        case 'services': return <Services />;
+        case 'invoices': return <Invoices />;
+        case 'team': return <Team />;
+        case 'reports': return <Reports />;
+        default: return <Dashboard />;
+      }
     }
   };
 
-  const navItems = [
+  const adminNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'contacts', label: 'Contacts', icon: '👥' },
     { id: 'leads', label: 'Leads & Opportunities', icon: '💼' },
@@ -1868,11 +2623,24 @@ function App() {
     { id: 'reports', label: 'Reports & Analytics', icon: '📈' }
   ];
 
+  const clientNavItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'projects', label: 'My Projects', icon: '📁' },
+    { id: 'invoices', label: 'My Invoices', icon: '📄' },
+    { id: 'support', label: 'Support Tickets', icon: '🎫' },
+    { id: 'messages', label: 'Messages', icon: '💬' },
+    { id: 'requests', label: 'Request Services', icon: '🛠️' },
+    { id: 'settings', label: 'Settings', icon: '⚙️' }
+  ];
+
+  const navItems = loginType === 'client' ? clientNavItems : adminNavItems;
+
   return (
     <div className="app-container">
       <div className="sidebar">
         <div className="sidebar-header">
           <h2>Suchna Consulting</h2>
+          {loginType === 'client' && <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: 'var(--space-4)' }}>Client Portal</div>}
         </div>
         <nav className="sidebar-nav">
           {navItems.map(item => (
